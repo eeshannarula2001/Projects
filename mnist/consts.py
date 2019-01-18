@@ -1,0 +1,11 @@
+lr = 0.01
+loss = 'categorical_crossentropy'
+activation = 'softmax'
+classes = 10
+input_shape = (28,28,1)
+resize_shape = (28,28)
+for_one = (1,28,28,1)
+streams = 1
+DIM1 = 28
+DIM2 = 28
+epochs = 1
