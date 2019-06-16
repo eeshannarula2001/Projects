@@ -11,8 +11,8 @@ from matplotlib import style
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-# geting the data
-data = getdata()
+# geting the data (only 40% of the data)
+data = getdata(40)
 
 #making the model
 model = makeModel(consts.lr,consts.th)
@@ -38,37 +38,61 @@ lets just first do this
 
 def animate(i): # where 'i' is no. of interation done
 
-    # we will make an array of the data it has reached till now
-    array = data[0:i]
+    # we need to take care that i does not exede the length of our data
+    if i < data.shape[0]:
 
-    '''
-    when the value of i is greater than threshold + 1
-    we can allow the model to get trained
-    '''
-
-    if i > consts.threshold + 1:
-
-        startTraining(array,i)   # we will write this function ...
+        # we will make an array of the data it has reached till now
+        array = data[0:i]
 
         '''
-        now we will plot the points on the graph
-        and the bought and sell points in red and
-        blue respectively
+        when the value of i is greater than threshold + 1
+        we can allow the model to get trained
         '''
 
-        # first we need to clear the graph
-        ax1.clear()
+        if i > consts.threshold + 1:
 
-        # plot the graph
-        ax1.plot(np.array(range(0,array.shape[0])),array)
+            startTraining(array,i)   # we will write this function ...
 
-        # plot the sell buy points..
+            '''
+            now we will plot the points on the graph
+            and the bought and sell points in red and
+            blue respectively
+            '''
 
-        # first buy points with red color ('ro' indicates red dot)
-        ax1.plot(consts.x_buyingprice,consts.y_buyingprice,'ro')
+            # first we need to clear the graph
+            ax1.clear()
 
-        # then blue colored selling points ('bo' indicates blue dot)
-        ax1.plot(consts.x_sellingprice,consts.y_sellingprice,'bo')
+            # plot the graph
+            ax1.plot(np.array(range(0,array.shape[0])),array)
+
+            # plot the sell buy points..
+
+            # first buy points with red color ('ro' indicates red dot)
+            ax1.plot(consts.x_buyingprice,consts.y_buyingprice,'ro')
+
+            # then blue colored selling points ('bo' indicates blue dot)
+            ax1.plot(consts.x_sellingprice,consts.y_sellingprice,'bo')
+
+    elif i == data.shape[0]:
+
+        '''
+        now when our data has finished we will predictict
+        if the stocks will rise or fall
+        '''
+
+        input = np.array([data[data.shape[0] - (consts.th):data.shape[0]]])
+
+        # now we will predict
+        prediction = model.predict(input)[0][0]
+
+        '''
+        now we will tell if it will rise or fall
+        '''
+
+        if prediction > .5:
+            print('rise')
+        else:
+            print('fall')
 
 '''
 now we will write a function which will train our model
@@ -112,6 +136,10 @@ def startTraining(array,i):
     '''
 
     model.fit(input,output,epochs = consts.epochs,verbose=0)
+
+    '''
+    we also need to keep updating our data
+    '''
 
 '''
 Now we will write the getinputoutput function which
@@ -193,10 +221,17 @@ def updateStatus(array,prediction,i):
              now what this if condition has checked is that is there
              any stocks which are not sold yet.if their are then we can
              continue to sell stocks
+
+             but...
+
+             if our sellingprice is less than our cost price then we dont
+             want to sell our stocks.
              '''
 
-             consts.x_sellingprice.append(i)
-             consts.y_sellingprice.append(array[i-1])
+             if consts.y_buyingprice[len(consts.y_buyingprice) - 1] < array[i - 1]:
+
+                 consts.x_sellingprice.append(i)
+                 consts.y_sellingprice.append(array[i-1])
 
 '''
 Now is the last step

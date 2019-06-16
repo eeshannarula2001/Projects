@@ -8,14 +8,14 @@ them when you read the code eventualy.
 
 
 # training parameters
-th = 10
+th = 30 
 lr =0.01
 epochs = 2
-threshold = 10
-interval = 500
+threshold = 30
+interval = 100
 
 # buying and selling threshold
-selling_threshold = .525
+selling_threshold = .535
 buying_threshold = .475
 
 # graph points
@@ -26,5 +26,5 @@ x_sellingprice = []
 y_sellingprice = []
 
 # data parameters
-company = 'amzn'
+company = 'goog'
 features = ['open','high','low','close']

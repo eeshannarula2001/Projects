@@ -8,7 +8,9 @@ import numpy as np
 from yahoo_fin.stock_info import *
 
 # function to load data
-def getdata():
+# it will take in the percentage of data we want it to return
+# this is because the data is too large and we dont want that much of data
+def getdata(percentdata):
 
     '''
     firt we will get the data from the yahoo api.
@@ -35,5 +37,14 @@ def getdata():
         sum += i
 
     avg = sum/4
+
+    '''
+    Now we only want some percent of the data
+    '''
+
+    length = round(avg.shape[0] * percentdata * 0.01)
+
+    # now we will reverse the array any take out some percent of data
+    avg = np.flip(np.flip(avg)[0:length])
 
     return avg
